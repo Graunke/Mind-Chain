@@ -52,7 +52,8 @@
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.5);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+            /* Aumentei a opacidade da sombra base de 0.05 para 0.1 */
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.10);
             transition: all 0.3s ease;
         }
         
@@ -130,7 +131,10 @@
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 w-full max-w-4xl">
-                    <button onClick={() => onStart('forward')} className="group relative p-4 md:p-6 glass-panel rounded-2xl hover:-translate-y-1 transition-all duration-300 text-left overflow-hidden h-full flex flex-col shadow-sm hover:shadow-md">
+                    <button 
+                        onClick={() => onStart('forward')}
+                        className="group relative p-4 md:p-6 glass-panel rounded-2xl hover:-translate-y-1 transition-all duration-300 text-left overflow-hidden h-full flex flex-col shadow-xl hover:shadow-2xl"
+                    >
                         <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/50 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                         <div className="relative z-10 flex flex-col h-full">
                             <div className="flex flex-col md:flex-row md:items-center justify-between mb-2 md:mb-3 gap-2">
@@ -148,7 +152,10 @@
                         </div>
                     </button>
 
-                    <button onClick={() => onStart('inverse')} className="group relative p-4 md:p-6 glass-panel rounded-2xl hover:-translate-y-1 transition-all duration-300 text-left overflow-hidden h-full flex flex-col shadow-sm hover:shadow-md">
+                    <button 
+                        onClick={() => onStart('inverse')}
+                        className="group relative p-4 md:p-6 glass-panel rounded-2xl hover:-translate-y-1 transition-all duration-300 text-left overflow-hidden h-full flex flex-col shadow-xl hover:shadow-2xl"
+                    >
                         <div className="absolute inset-0 bg-gradient-to-br from-teal-50/50 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                         <div className="relative z-10 flex flex-col h-full">
                             <div className="flex flex-col md:flex-row md:items-center justify-between mb-2 md:mb-3 gap-2">
@@ -371,7 +378,7 @@
                             setTimeLeft(5);
                         } else if (phase === 'hold') {
                             setPhase('exhale');
-                            setCycleText('Expire...');
+                            setCycleText('Solte...');
                             setTimeLeft(5);
                         }
                     };
@@ -457,27 +464,43 @@
                     <BackgroundShapes />
                     
                     {/* Header de Navegação */}
-                    <header className="p-4 md:p-6 z-20">
-                        <nav className="glass-panel rounded-2xl p-2 flex justify-between items-center max-w-2xl mx-auto shadow-md">
-                            <div className="flex gap-1">
-                                <button 
-                                    onClick={() => setActiveTool('thought-record')}
-                                    className={`px-4 py-2 rounded-xl text-xs md:text-sm font-bold transition-all flex items-center gap-2 ${activeTool === 'thought-record' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-500 hover:bg-slate-100'}`}
-                                >
-                                    <Brain size={16} /> Registro de Pensamentos
-                                </button>
-                                <button 
-                                    onClick={() => setActiveTool('breathing')}
-                                    className={`px-4 py-2 rounded-xl text-xs md:text-sm font-bold transition-all flex items-center gap-2 ${activeTool === 'breathing' ? 'bg-teal-600 text-white shadow-md' : 'text-slate-500 hover:bg-slate-100'}`}
-                                >
-                                    <Wind size={16} /> Respiração
-                                </button>
+                    <header className="p-4 md:p-6 z-20 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0 relative">
+                        
+                        {/* Logotipo posicionado na esquerda (em telas md+) */}
+                        <div className="md:absolute md:left-8 md:top-1/2 md:-translate-y-1/2 flex items-center gap-3 cursor-pointer group order-2 md:order-1" onClick={() => window.location.reload()}>
+                            <div className="w-10 h-10 bg-white/80 backdrop-blur-md rounded-xl flex items-center justify-center text-indigo-600 shadow-sm border border-white/50 group-hover:scale-105 transition-transform">
+                                <Activity size={20} />
                             </div>
-                            <div className="hidden md:flex items-center gap-2 pr-2">
-                                <div className="w-2 h-2 rounded-full bg-green-400"></div>
-                                <span className="text-xs font-semibold text-slate-400">MindChain</span>
-                            </div>
-                        </nav>
+                            <span className="font-bold text-xl text-slate-800 tracking-tight">MindChain</span>
+                        </div>
+
+                        {/* Barra de Navegação Centralizada com Estilo dos Cards */}
+                        <div className="w-full flex justify-center order-1 md:order-2">
+                            <nav className="glass-panel rounded-2xl p-3 flex justify-center items-center shadow-xl relative overflow-hidden ring-1 ring-white/60 transition-all duration-500">
+                                
+                                {/* Gradiente de Fundo Dinâmico (Igual aos Cards) */}
+                                <div className={`absolute inset-0 opacity-30 transition-colors duration-500 ${activeTool === 'thought-record' ? 'bg-gradient-to-r from-indigo-50 to-purple-50' : 'bg-gradient-to-r from-teal-50 to-emerald-50'}`}></div>
+                                
+                                <div className="flex relative z-10">
+                                    <button 
+                                        onClick={() => setActiveTool('thought-record')}
+                                        className={`p-2 rounded-xl text-xs md:text-sm font-bold transition-all flex items-center gap-2 ${activeTool === 'thought-record' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200 scale-105' : 'text-slate-500 hover:bg-white/50 hover:text-indigo-600'}`}
+                                    >
+                                        <Brain size={16} /> <span className="hidden sm:inline">Registro de Pensamentos</span><span className="sm:hidden">Registro</span>
+                                    </button>
+                                    
+                                    <div className="w-px bg-slate-300/50 mx-2 my-2"></div>
+                                    
+                                    <button 
+                                        onClick={() => setActiveTool('breathing')}
+                                        className={`p-3 rounded-xl text-xs md:text-sm font-bold transition-all flex items-center gap-2 ${activeTool === 'breathing' ? 'bg-teal-600 text-white shadow-lg shadow-teal-200 scale-105' : 'text-slate-500 hover:bg-white/50 hover:text-teal-600'}`}
+                                    >
+                                        <Wind size={16} /> Respiração
+                                    </button>
+                                </div>
+                            </nav>
+                        </div>
+                        
                     </header>
 
                     <main className="container mx-auto flex-grow z-10 flex flex-col justify-center py-4">
@@ -488,15 +511,15 @@
                     <footer className="py-6 text-center text-slate-400 text-xs mt-auto z-10">
                         <p>Desenvolvido por Mateus Uriel Graunke Barroso</p>
                         <div className="flex justify-center items-center gap-6 p-3">
-                                <a href="https://www.instagram.com/mateusurielbarroso/" className="text-slate-400 hover:text-pink-600 transition-all transform hover:scale-110 hover:-translate-y-1" aria-label="Instagram" target="_blank">
-                                    <Instagram size={24} />
-                                </a>
-                                <a href="https://github.com/Graunke" className="text-slate-400 hover:text-slate-900 transition-all transform hover:scale-110 hover:-translate-y-1" aria-label="GitHub" target="_blank">
-                                    <Github size={24} />
-                                </a>
-                                <a href="https://www.linkedin.com/in/mateus-uriel-graunke-barroso-74b7a1230/" className="text-slate-400 hover:text-blue-700 transition-all transform hover:scale-110 hover:-translate-y-1" aria-label="LinkedIn" target="_blank">
-                                    <Linkedin size={24} />
-                                </a>
+                            <a href="https://www.instagram.com/mateusurielbarroso/" className="text-slate-400 hover:text-pink-600 transition-all transform hover:scale-110 hover:-translate-y-1" aria-label="Instagram" target="_blank">
+                                <Instagram size={24} />
+                            </a>
+                            <a href="https://github.com/Graunke" className="text-slate-400 hover:text-slate-900 transition-all transform hover:scale-110 hover:-translate-y-1" aria-label="GitHub" target="_blank">
+                                <Github size={24} />
+                            </a>
+                            <a href="https://www.linkedin.com/in/mateus-uriel-graunke-barroso-74b7a1230/" className="text-slate-400 hover:text-blue-700 transition-all transform hover:scale-110 hover:-translate-y-1" aria-label="LinkedIn" target="_blank">
+                                <Linkedin size={24} />
+                            </a>
                         </div>
                     </footer>
                 </div>
@@ -508,21 +531,3 @@
     </script>
 </body>
 </html>
-
-
-<footer className="py-6 text-center text-slate-500 text-sm mt-auto z-10 relative">
-                        <div className="bg-white/40 backdrop-blur-sm py-6">
-                            <p className="font-semibold mb-4 text-slate-600">Desenvolvido por Mateus Uriel Graunke Barroso</p>
-                            <div className="flex justify-center items-center gap-8">
-                                <a href="https://www.instagram.com/mateusurielbarroso/" className="text-slate-400 hover:text-pink-600 transition-all transform hover:scale-110 hover:-translate-y-1" aria-label="Instagram" target="_blank">
-                                    <Instagram size={24} />
-                                </a>
-                                <a href="https://github.com/Graunke" className="text-slate-400 hover:text-slate-900 transition-all transform hover:scale-110 hover:-translate-y-1" aria-label="GitHub" target="_blank">
-                                    <Github size={24} />
-                                </a>
-                                <a href="https://www.linkedin.com/in/mateus-uriel-graunke-barroso-74b7a1230/" className="text-slate-400 hover:text-blue-700 transition-all transform hover:scale-110 hover:-translate-y-1" aria-label="LinkedIn" target="_blank">
-                                    <Linkedin size={24} />
-                                </a>
-                            </div>
-                        </div>
-                    </footer>
