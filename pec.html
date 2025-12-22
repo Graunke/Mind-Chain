@@ -392,11 +392,11 @@
                             </div>
                         </div>
                         
-                        <div className="space-y-1">
+                        <div className="space-y-2">
                             <h2 className="text-3xl md:text-4xl font-black bg-gradient-to-r from-blue-900 via-sky-700 to-blue-900 bg-clip-text text-transparent pb-2">
                                 Cartões de Enfrentamento
                             </h2>
-                            <p className="text-slate-600 text-sm max-w-lg mx-auto">Escreva frases que te ajudem a superar momentos difíceis. Tenha-as sempre à mão.</p>
+                            <p className="text-lg font-light text-slate-600">Escreva frases que te ajudem a superar momentos difíceis. Tenha-as sempre à mão.</p>
                         </div>
                     </div>
 
@@ -524,7 +524,7 @@
                             <h2 className="text-3xl md:text-4xl font-black bg-gradient-to-r from-teal-900 via-emerald-800 to-teal-900 bg-clip-text text-transparent tracking-tight pb-2">
                                 Respiração 5-5-5
                             </h2>
-                            <p className="text-slate-600 max-w-md mx-auto">Acalme sua mente. Siga o ciclo visual para regular sua ansiedade.</p>
+                            <p className="text-lg font-light text-slate-600">Acalme sua mente. Siga o ciclo visual para regular sua ansiedade.</p>
                         </div>
                     </div>
 
@@ -582,15 +582,15 @@
 
                         {/* Barra de Navegação Centralizada com Estilo dos Cards */}
                         <div className="w-full flex justify-center order-1 md:order-2 px-2 md:px-0">
-                            <nav className="glass-panel rounded-2xl p-2 flex justify-center items-center shadow-2xl shadow-indigo-100/40 relative overflow-hidden ring-1 ring-white/60 transition-all duration-500 w-full max-w-3xl">
+                            <nav className="glass-panel rounded-2xl p-2 flex justify-center items-center shadow-lg shadow-indigo-400/40 relative overflow-hidden ring-1 ring-white/60 transition-all duration-500 w-full max-w-3xl">
                                 
                                 {/* Gradiente de Fundo Dinâmico */}
-                                <div className={`absolute inset-0 opacity-30 transition-colors duration-500 ${getGradient()}`}></div>
+                                <div className={`absolute inset-2 opacity-30 transition-colors duration-500 ${getGradient()}`}></div>
                                 
                                 <div className="flex relative z-8 w-full gap-2 px-4">
                                     <button 
                                         onClick={() => setActiveTool('thought-record')}
-                                        className={`p-3 rounded-xl text-xs md:text-sm font-bold transition-all flex items-center justify-center gap-2 flex-1 whitespace-nowrap ${activeTool === 'thought-record' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200 scale-105' : 'text-slate-500 hover:bg-white/50 hover:text-indigo-600'}`}
+                                        className={`p-3 rounded-xl text-xs md:text-sm font-bold transition-all flex items-center justify-center gap-2 flex-1 whitespace-nowrap ${activeTool === 'thought-record' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200 scale-55' : 'text-slate-500 hover:bg-white/50 hover:text-indigo-600'}`}
                                     >
                                         <Brain size={16} className="flex-shrink-0" /> Registro de Pensamentos
                                     </button>
@@ -599,7 +599,7 @@
                                     
                                     <button 
                                         onClick={() => setActiveTool('breathing')}
-                                        className={`p-3 rounded-xl text-xs md:text-sm font-bold transition-all flex items-center justify-center gap-2 flex-1 whitespace-nowrap ${activeTool === 'breathing' ? 'bg-teal-600 text-white shadow-lg shadow-teal-200 scale-105' : 'text-slate-500 hover:bg-white/50 hover:text-teal-600'}`}
+                                        className={`p-3 rounded-xl text-xs md:text-sm font-bold transition-all flex items-center justify-center gap-2 flex-1 whitespace-nowrap ${activeTool === 'breathing' ? 'bg-teal-600 text-white shadow-lg shadow-teal-200 scale-55' : 'text-slate-500 hover:bg-white/50 hover:text-teal-600'}`}
                                     >
                                         <Wind size={16} className="flex-shrink-0" /> Respiração
                                     </button>
@@ -608,7 +608,7 @@
 
                                     <button 
                                         onClick={() => setActiveTool('coping-cards')}
-                                        className={`p-3 rounded-xl text-xs md:text-sm font-bold transition-all flex items-center justify-center gap-2 flex-1 whitespace-nowrap ${activeTool === 'coping-cards' ? 'bg-blue-600 text-white shadow-lg shadow-blue-200 scale-105' : 'text-slate-500 hover:bg-white/50 hover:text-blue-600'}`}
+                                        className={`p-3 rounded-xl text-xs md:text-sm font-bold transition-all flex items-center justify-center gap-2 flex-1 whitespace-nowrap ${activeTool === 'coping-cards' ? 'bg-blue-600 text-white shadow-lg shadow-blue-200 scale-55' : 'text-slate-500 hover:bg-white/50 hover:text-blue-600'}`}
                                     >
                                         <Shield size={16} className="flex-shrink-0" /> Cartões de Enfrentamento
                                     </button>
