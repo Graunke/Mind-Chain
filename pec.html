@@ -581,13 +581,13 @@
                         </div>
 
                         {/* Barra de Navegação Centralizada com Estilo dos Cards */}
-                        <div className="w-full flex justify-center order-1 md:order-2 px-4 md:px-0">
+                        <div className="w-full flex justify-center order-1 md:order-2 px-2 md:px-0">
                             <nav className="glass-panel rounded-2xl p-2 flex justify-center items-center shadow-2xl shadow-indigo-100/40 relative overflow-hidden ring-1 ring-white/60 transition-all duration-500 w-full max-w-3xl">
                                 
                                 {/* Gradiente de Fundo Dinâmico */}
                                 <div className={`absolute inset-0 opacity-30 transition-colors duration-500 ${getGradient()}`}></div>
                                 
-                                <div className="flex relative z-10 overflow-x-auto no-scrollbar w-full justify-between gap-2 px-2">
+                                <div className="flex relative z-8 w-full gap-2 px-4">
                                     <button 
                                         onClick={() => setActiveTool('thought-record')}
                                         className={`p-3 rounded-xl text-xs md:text-sm font-bold transition-all flex items-center justify-center gap-2 flex-1 whitespace-nowrap ${activeTool === 'thought-record' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200 scale-105' : 'text-slate-500 hover:bg-white/50 hover:text-indigo-600'}`}
