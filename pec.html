@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MindChain - Diário Cognitivo</title>
+    <title>MindChain</title>
     
     <!-- React & ReactDOM -->
     <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
@@ -97,6 +97,7 @@
         const Wind = (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width={props.size || 24} height={props.size || 24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2"/></svg>;
         const Play = (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width={props.size || 24} height={props.size || 24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>;
         const Pause = (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width={props.size || 24} height={props.size || 24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>;
+        const Shield = (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width={props.size || 24} height={props.size || 24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>;
         
         // Redes Sociais
         const Instagram = (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width={props.size || 24} height={props.size || 24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>;
@@ -124,7 +125,6 @@
                         </div>
                     </div>
                     <div className="space-y-1">
-                        {/* ADICIONADO: pb-2 para evitar corte na letra 'g' devido ao bg-clip-text */}
                         <h1 className="text-3xl md:text-4xl font-black bg-gradient-to-r from-indigo-900 via-purple-800 to-indigo-900 bg-clip-text text-transparent tracking-tight pb-2">Registro de Pensamentos</h1>
                         <p className="text-lg font-light text-slate-600">Entenda o ciclo da sua mente.</p>
                     </div>
@@ -356,6 +356,93 @@
             return null;
         };
 
+        // --- COMPONENTE FERRAMENTA: CARTÕES DE ENFRENTAMENTO ---
+        const CopingCardsTool = () => {
+            const [cards, setCards] = useState([]);
+            const [inputText, setInputText] = useState('');
+
+            useEffect(() => {
+                const saved = localStorage.getItem('coping_cards');
+                if (saved) { try { setCards(JSON.parse(saved)); } catch (e) { setCards([]); } }
+            }, []);
+
+            const addCard = (e) => {
+                e.preventDefault();
+                if (!inputText.trim()) return;
+                const newCards = [...cards, { id: Date.now(), text: inputText }];
+                setCards(newCards);
+                localStorage.setItem('coping_cards', JSON.stringify(newCards));
+                setInputText('');
+            };
+
+            const removeCard = (id) => {
+                const newCards = cards.filter(c => c.id !== id);
+                setCards(newCards);
+                localStorage.setItem('coping_cards', JSON.stringify(newCards));
+            };
+
+            return (
+                <div className="max-w-4xl mx-auto w-full animate-fade-in px-4 pb-12">
+                    {/* Header com Ícone Decorativo (Novo) */}
+                    <div className="text-center mb-10 space-y-4">
+                        <div className="relative inline-block">
+                            <div className="absolute inset-0 bg-blue-200 blur-xl rounded-full opacity-50"></div>
+                            <div className="relative bg-white/90 backdrop-blur-md p-4 rounded-2xl w-20 h-20 flex items-center justify-center mx-auto shadow-lg ring-1 ring-white/50">
+                                <Shield size={40} className="text-blue-600 drop-shadow-sm" />
+                            </div>
+                        </div>
+                        
+                        <div className="space-y-1">
+                            <h2 className="text-3xl md:text-4xl font-black bg-gradient-to-r from-blue-900 via-sky-700 to-blue-900 bg-clip-text text-transparent pb-2">
+                                Cartões de Enfrentamento
+                            </h2>
+                            <p className="text-slate-600 text-sm max-w-lg mx-auto">Escreva frases que te ajudem a superar momentos difíceis. Tenha-as sempre à mão.</p>
+                        </div>
+                    </div>
+
+                    <div className="glass-panel rounded-2xl p-6 mb-8 shadow-md">
+                        <form onSubmit={addCard} className="flex gap-2">
+                            <input 
+                                autoFocus 
+                                type="text" 
+                                value={inputText} 
+                                onChange={(e) => setInputText(e.target.value)} 
+                                placeholder="Nova frase de enfrentamento..." 
+                                className="glass-input flex-1 p-3.5 rounded-xl text-base text-slate-700 placeholder:text-slate-400 outline-none w-full" 
+                            />
+                            <button 
+                                type="submit" 
+                                disabled={!inputText.trim()} 
+                                className="bg-indigo-600 text-white p-3.5 rounded-xl hover:bg-indigo-700 disabled:opacity-50 transition-all active:scale-95 shadow-md shadow-indigo-200"
+                            >
+                                <Plus size={24} />
+                            </button>
+                        </form>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {cards.length === 0 ? (
+                            <div className="col-span-full text-center py-12 text-slate-400 italic bg-white/30 rounded-2xl border border-slate-100">
+                                Nenhum cartão criado ainda.
+                            </div>
+                        ) : (
+                            cards.map(card => (
+                                <div key={card.id} className="glass-panel p-6 rounded-2xl relative group hover:-translate-y-1 transition-all duration-300 border border-white/60">
+                                    <div className="absolute top-0 right-0 p-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <button onClick={() => removeCard(card.id)} className="text-slate-300 hover:text-red-500 transition-colors"><X size={18} /></button>
+                                    </div>
+                                    <div className="flex items-start gap-3">
+                                        <Shield className="text-blue-500 mt-1 flex-shrink-0" size={20} />
+                                        <p className="text-slate-700 font-medium text-lg leading-relaxed">"{card.text}"</p>
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
         // --- COMPONENTE FERRAMENTA: RESPIRAÇÃO & RELAXAMENTO ---
         const BreathingTool = () => {
             const [isActive, setIsActive] = useState(false);
@@ -423,9 +510,22 @@
 
             return (
                 <div className="flex flex-col items-center justify-center min-h-[60vh] animate-fade-in px-4">
-                    <div className="text-center mb-10">
-                        <h2 className="text-3xl md:text-4xl font-black text-teal-800 mb-2">Respiração 5-5-5</h2>
-                        <p className="text-slate-600 max-w-md mx-auto">Acalme sua mente. Siga o ciclo visual para regular sua ansiedade.</p>
+                    
+                    {/* Header com Ícone Decorativo (Novo) */}
+                    <div className="text-center mb-10 space-y-4">
+                        <div className="relative inline-block">
+                            <div className="absolute inset-0 bg-teal-200 blur-xl rounded-full opacity-50"></div>
+                            <div className="relative bg-white/90 backdrop-blur-md p-4 rounded-2xl w-20 h-20 flex items-center justify-center mx-auto shadow-lg ring-1 ring-white/50">
+                                <Wind size={40} className="text-teal-600 drop-shadow-sm" />
+                            </div>
+                        </div>
+                        
+                        <div className="space-y-1">
+                            <h2 className="text-3xl md:text-4xl font-black bg-gradient-to-r from-teal-900 via-emerald-800 to-teal-900 bg-clip-text text-transparent tracking-tight pb-2">
+                                Respiração 5-5-5
+                            </h2>
+                            <p className="text-slate-600 max-w-md mx-auto">Acalme sua mente. Siga o ciclo visual para regular sua ansiedade.</p>
+                        </div>
                     </div>
 
                     <div className="relative w-64 h-64 md:w-80 md:h-80 flex items-center justify-center mb-10">
@@ -457,7 +557,13 @@
 
         // --- COMPONENTE PRINCIPAL (APP) ---
         const App = () => {
-            const [activeTool, setActiveTool] = useState('thought-record'); // 'thought-record' | 'breathing'
+            const [activeTool, setActiveTool] = useState('thought-record'); // 'thought-record' | 'breathing' | 'coping-cards'
+
+            const getGradient = () => {
+                if (activeTool === 'thought-record') return 'bg-gradient-to-r from-indigo-50 to-purple-50';
+                if (activeTool === 'breathing') return 'bg-gradient-to-r from-teal-50 to-emerald-50';
+                return 'bg-gradient-to-r from-blue-50 to-indigo-50';
+            };
 
             return (
                 <div className="min-h-screen flex flex-col relative z-0">
@@ -475,27 +581,36 @@
                         </div>
 
                         {/* Barra de Navegação Centralizada com Estilo dos Cards */}
-                        <div className="w-full flex justify-center order-1 md:order-2">
-                            <nav className="glass-panel rounded-2xl p-3 flex justify-center items-center shadow-xl relative overflow-hidden ring-1 ring-white/60 transition-all duration-500">
+                        <div className="w-full flex justify-center order-1 md:order-2 px-4 md:px-0">
+                            <nav className="glass-panel rounded-2xl p-2 flex justify-center items-center shadow-2xl shadow-indigo-100/40 relative overflow-hidden ring-1 ring-white/60 transition-all duration-500 w-full max-w-3xl">
                                 
-                                {/* Gradiente de Fundo Dinâmico (Igual aos Cards) */}
-                                <div className={`absolute inset-0 opacity-30 transition-colors duration-500 ${activeTool === 'thought-record' ? 'bg-gradient-to-r from-indigo-50 to-purple-50' : 'bg-gradient-to-r from-teal-50 to-emerald-50'}`}></div>
+                                {/* Gradiente de Fundo Dinâmico */}
+                                <div className={`absolute inset-0 opacity-30 transition-colors duration-500 ${getGradient()}`}></div>
                                 
-                                <div className="flex relative z-10">
+                                <div className="flex relative z-10 overflow-x-auto no-scrollbar w-full justify-between gap-2 px-2">
                                     <button 
                                         onClick={() => setActiveTool('thought-record')}
-                                        className={`p-2 rounded-xl text-xs md:text-sm font-bold transition-all flex items-center gap-2 ${activeTool === 'thought-record' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200 scale-105' : 'text-slate-500 hover:bg-white/50 hover:text-indigo-600'}`}
+                                        className={`p-3 rounded-xl text-xs md:text-sm font-bold transition-all flex items-center justify-center gap-2 flex-1 whitespace-nowrap ${activeTool === 'thought-record' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200 scale-105' : 'text-slate-500 hover:bg-white/50 hover:text-indigo-600'}`}
                                     >
-                                        <Brain size={16} /> <span className="hidden sm:inline">Registro de Pensamentos</span><span className="sm:hidden">Registro</span>
+                                        <Brain size={16} className="flex-shrink-0" /> Registro de Pensamentos
                                     </button>
                                     
-                                    <div className="w-px bg-slate-300/50 mx-2 my-2"></div>
+                                    <div className="w-px bg-slate-300/50 my-2 flex-shrink-0"></div>
                                     
                                     <button 
                                         onClick={() => setActiveTool('breathing')}
-                                        className={`p-3 rounded-xl text-xs md:text-sm font-bold transition-all flex items-center gap-2 ${activeTool === 'breathing' ? 'bg-teal-600 text-white shadow-lg shadow-teal-200 scale-105' : 'text-slate-500 hover:bg-white/50 hover:text-teal-600'}`}
+                                        className={`p-3 rounded-xl text-xs md:text-sm font-bold transition-all flex items-center justify-center gap-2 flex-1 whitespace-nowrap ${activeTool === 'breathing' ? 'bg-teal-600 text-white shadow-lg shadow-teal-200 scale-105' : 'text-slate-500 hover:bg-white/50 hover:text-teal-600'}`}
                                     >
-                                        <Wind size={16} /> Respiração
+                                        <Wind size={16} className="flex-shrink-0" /> Respiração
+                                    </button>
+
+                                    <div className="w-px bg-slate-300/50 my-2 flex-shrink-0"></div>
+
+                                    <button 
+                                        onClick={() => setActiveTool('coping-cards')}
+                                        className={`p-3 rounded-xl text-xs md:text-sm font-bold transition-all flex items-center justify-center gap-2 flex-1 whitespace-nowrap ${activeTool === 'coping-cards' ? 'bg-blue-600 text-white shadow-lg shadow-blue-200 scale-105' : 'text-slate-500 hover:bg-white/50 hover:text-blue-600'}`}
+                                    >
+                                        <Shield size={16} className="flex-shrink-0" /> Cartões de Enfrentamento
                                     </button>
                                 </div>
                             </nav>
@@ -506,6 +621,7 @@
                     <main className="container mx-auto flex-grow z-10 flex flex-col justify-center py-4">
                         {activeTool === 'thought-record' && <ThoughtRecordTool />}
                         {activeTool === 'breathing' && <BreathingTool />}
+                        {activeTool === 'coping-cards' && <CopingCardsTool />}
                     </main>
 
                     <footer className="py-6 text-center text-slate-400 text-xs mt-auto z-10">
