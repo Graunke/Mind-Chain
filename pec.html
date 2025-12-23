@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MindChain</title>
+    <title>MindChain - Suíte Cognitiva</title>
     
     <!-- React & ReactDOM -->
     <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
@@ -47,12 +47,10 @@
         .animate-float-2 { animation: float 20s infinite ease-in-out reverse; }
         .animate-float-3 { animation: float 18s infinite ease-in-out 2s; }
 
-        /* Estilo de Vidro Suavizado */
         .glass-panel {
             background: rgba(255, 255, 255, 0.65);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            /* Reduzi a opacidade da borda de 0.5 para 0.3 para uma transição mais suave com o fundo */
             border: 1px solid rgba(255, 255, 255, 0.3);
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.10);
             transition: all 0.3s ease;
@@ -74,7 +72,6 @@
         .circle-hold { animation: breathe-hold 5s ease-in-out infinite; }
         .circle-exhale { animation: breathe-out 5s ease-in-out forwards; }
 
-        /* Nova classe para suavizar o final da lista de rolagem */
         .scroll-fade-mask {
             mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
             -webkit-mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
@@ -87,6 +84,144 @@
 
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
+
+        // --- Dicionário de Traduções ---
+        const translations = {
+            pt: {
+                nav: { record: "Registro", recordFull: "Registro de Pensamentos", breathing: "Respiração", cards: "Cartões de Enfrentamento" },
+                footer: "Desenvolvido por",
+                intro: {
+                    title: "Registro de Pensamentos",
+                    subtitle: "Entenda o ciclo da sua mente.",
+                    direct: "Cadeia Direta",
+                    directDesc: "Comece pelo pensamento e descubra as consequências.",
+                    inverse: "Cadeia Inversa",
+                    inverseDesc: "Analise uma ação para entender suas raízes.",
+                    thought: "Pensamento",
+                    emotion: "Emoção",
+                    action: "Ação"
+                },
+                input: {
+                    placeholder: "Digite e pressione enter...",
+                    emptyTitle: "Sua mente está calma por enquanto...",
+                    emptyDesc: "Adicione itens acima",
+                    count: "registros",
+                    next: "Próximo Passo",
+                    overview: "Ver Panorama",
+                    stages: {
+                        pensamentos: { label: "Pensamentos", prompt: "O que passou pela sua cabeça?", title: "Pensamentos Automáticos", text: "Frases rápidas e interpretações sobre a situação.", examples: "'Vai dar tudo errado', 'Eles estão me julgando'." },
+                        emocoes: { label: "Emoções", prompt: "O que você sentiu?", title: "Identificando Emoções", text: "O que você sente no corpo e na alma (uma palavra).", examples: "Ansiedade, Medo, Raiva, Culpa, Tristeza." },
+                        comportamentos: { label: "Comportamentos", prompt: "O que você fez?", title: "Suas Ações", text: "O que você fez ou deixou de fazer.", examples: "Chorar, gritar, silenciar, procrastinar." }
+                    }
+                },
+                result: {
+                    historyTag: "Visualizando Histórico",
+                    completeTag: "Análise Completa",
+                    title: "Panorama Cognitivo",
+                    descHistory: "Revendo padrões passados para entender o presente.",
+                    descComplete: "Observe os padrões. Entender a conexão entre estes três pilares é o primeiro passo para a mudança.",
+                    empty: "Vazio",
+                    backHistory: "Voltar ao Histórico",
+                    newAnalysis: "Iniciar Nova Análise",
+                    save: "Salvar e Finalizar",
+                    print: "Imprimir"
+                },
+                history: {
+                    title: "Seu Histórico",
+                    subtitle: "Salvo neste computador.",
+                    empty: "Você ainda não tem análises salvas.",
+                    create: "Criar nova análise",
+                    direct: "Direta",
+                    inverse: "Inversa",
+                    untitled: "Sem título...",
+                    back: "Voltar",
+                    viewBtn: "Ver Histórico Salvo"
+                },
+                breathing: {
+                    title: "Respiração 5-5-5",
+                    subtitle: "Acalme sua mente. Siga o ciclo visual para regular sua ansiedade.",
+                    ready: "Pronto?",
+                    inhale: "Inspire...",
+                    hold: "Segure...",
+                    exhale: "Solte...",
+                    stop: "Parar",
+                    start: "Começar"
+                },
+                cards: {
+                    title: "Cartões de Enfrentamento",
+                    subtitle: "Escreva frases que te ajudem a superar momentos difíceis. Tenha-as sempre à mão.",
+                    placeholder: "Nova frase...",
+                    empty: "Nenhum cartão criado ainda."
+                }
+            },
+            en: {
+                nav: { record: "Record", recordFull: "Thought Record", breathing: "Breathing", cards: "Coping Cards" },
+                footer: "Developed by",
+                intro: {
+                    title: "Thought Record",
+                    subtitle: "Understand your mind's cycle.",
+                    direct: "Direct Chain",
+                    directDesc: "Start with a thought and discover the consequences.",
+                    inverse: "Inverse Chain",
+                    inverseDesc: "Analyze an action to understand its roots.",
+                    thought: "Thought",
+                    emotion: "Emotion",
+                    action: "Action"
+                },
+                input: {
+                    placeholder: "Type and press enter...",
+                    emptyTitle: "Your mind is calm for now...",
+                    emptyDesc: "Add items above",
+                    count: "entries",
+                    next: "Next Step",
+                    overview: "View Overview",
+                    stages: {
+                        pensamentos: { label: "Thoughts", prompt: "What went through your mind?", title: "Automatic Thoughts", text: "Quick sentences and interpretations of the situation.", examples: "'Everything will go wrong', 'They are judging me'." },
+                        emocoes: { label: "Emotions", prompt: "What did you feel?", title: "Identifying Emotions", text: "What you feel in your body and soul (one word).", examples: "Anxiety, Fear, Anger, Guilt, Sadness." },
+                        comportamentos: { label: "Behaviors", prompt: "What did you do?", title: "Your Actions", text: "What you did or didn't do.", examples: "Crying, shouting, silence, procrastinating." }
+                    }
+                },
+                result: {
+                    historyTag: "Viewing History",
+                    completeTag: "Complete Analysis",
+                    title: "Cognitive Overview",
+                    descHistory: "Reviewing past patterns to understand the present.",
+                    descComplete: "Observe patterns. Understanding the connection between these three pillars is the first step to change.",
+                    empty: "Empty",
+                    backHistory: "Back to History",
+                    newAnalysis: "Start New Analysis",
+                    save: "Save and Finish",
+                    print: "Print"
+                },
+                history: {
+                    title: "Your History",
+                    subtitle: "Saved on this computer.",
+                    empty: "You have no saved analyses yet.",
+                    create: "Create new analysis",
+                    direct: "Direct",
+                    inverse: "Inverse",
+                    untitled: "Untitled...",
+                    back: "Back",
+                    viewBtn: "View Saved History"
+                },
+                breathing: {
+                    title: "5-5-5 Breathing",
+                    subtitle: "Calm your mind. Follow the visual cycle to regulate your anxiety.",
+                    ready: "Ready?",
+                    inhale: "Inhale...",
+                    hold: "Hold...",
+                    exhale: "Exhale...",
+                    stop: "Stop",
+                    start: "Start"
+                },
+                cards: {
+                    title: "Coping Cards",
+                    subtitle: "Write phrases that help you overcome difficult moments. Keep them handy.",
+                    placeholder: "New phrase...",
+                    empty: "No cards created yet."
+                }
+            }
+        };
 
         // --- Ícones ---
         const Brain = (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width={props.size || 24} height={props.size || 24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-4.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/></svg>;
@@ -105,6 +240,7 @@
         const Play = (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width={props.size || 24} height={props.size || 24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>;
         const Pause = (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width={props.size || 24} height={props.size || 24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>;
         const Shield = (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width={props.size || 24} height={props.size || 24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>;
+        const Globe = (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width={props.size || 24} height={props.size || 24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>;
         
         // Redes Sociais
         const Instagram = (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width={props.size || 24} height={props.size || 24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>;
@@ -114,7 +250,6 @@
         const BackgroundShapes = () => (
             <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
                 <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-purple-50"></div>
-                {/* Blur aumentado e opacidade ajustada para suavizar o fundo */}
                 <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-purple-200/30 rounded-full blur-[100px] animate-float-1 mix-blend-multiply"></div>
                 <div className="absolute bottom-[10%] right-[-5%] w-[400px] h-[400px] bg-blue-200/30 rounded-full blur-[100px] animate-float-2 mix-blend-multiply"></div>
                 <div className="absolute top-[20%] right-[10%] w-[300px] h-[300px] bg-pink-200/30 rounded-full blur-[100px] animate-float-3 mix-blend-multiply"></div>
@@ -122,7 +257,7 @@
         );
 
         // --- SUB-VIEWS DO REGISTRO DE PENSAMENTOS ---
-        const IntroView = ({ onStart }) => (
+        const IntroView = ({ onStart, t }) => (
             <div className="flex flex-col items-center w-full max-w-4xl mx-auto space-y-6 animate-fade-in px-4 pt-6 md:pt-12">
                 <div className="text-center space-y-3">
                     <div className="relative inline-block">
@@ -132,50 +267,50 @@
                         </div>
                     </div>
                     <div className="space-y-1">
-                        <h1 className="text-2xl md:text-3xl font-black bg-gradient-to-r from-indigo-900 via-purple-800 to-indigo-900 bg-clip-text text-transparent tracking-tight pb-1">Registro de Pensamentos</h1>
-                        <p className="text-base font-light text-slate-600">Entenda o ciclo da sua mente.</p>
+                        <h1 className="text-2xl md:text-3xl font-black bg-gradient-to-r from-indigo-900 via-purple-800 to-indigo-900 bg-clip-text text-transparent tracking-tight pb-1">{t.intro.title}</h1>
+                        <p className="text-base font-light text-slate-600">{t.intro.subtitle}</p>
                     </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 w-full">
                     <button 
                         onClick={() => onStart('forward')}
-                        className="group relative p-4 glass-panel rounded-2xl hover:-translate-y-1 transition-all duration-300 text-left overflow-hidden h-full flex flex-col shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+                        className="group relative p-4 glass-panel rounded-2xl hover:-translate-y-1 transition-all duration-300 text-left overflow-hidden h-full flex flex-col shadow-lg hover:shadow-xl"
                     >
                         <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/50 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                         <div className="relative z-10 flex flex-col h-full w-full">
                             <div className="flex flex-row items-start justify-between mb-2 gap-2 w-full">
-                                <span className="font-bold text-sm md:text-base text-indigo-950 leading-tight">Cadeia Direta</span>
+                                <span className="font-bold text-sm md:text-base text-indigo-950 leading-tight">{t.intro.direct}</span>
                                 <div className="bg-indigo-100/50 p-1 rounded-full w-fit group-hover:bg-indigo-600 group-hover:text-white transition-all flex-shrink-0"><ArrowRight size={14} /></div>
                             </div>
-                            <p className="text-slate-500 mb-3 font-light text-xs flex-grow leading-snug">Comece pelo pensamento e descubra as consequências.</p>
+                            <p className="text-slate-500 mb-3 font-light text-xs flex-grow leading-snug">{t.intro.directDesc}</p>
                             <div className="flex flex-row flex-wrap items-center gap-1 text-[9px] md:text-[10px] font-semibold uppercase tracking-wider text-slate-400">
-                                <span className="bg-blue-100/60 text-blue-700 px-1.5 py-0.5 rounded-full whitespace-nowrap">Pensamento</span>
+                                <span className="bg-blue-100/60 text-blue-700 px-1.5 py-0.5 rounded-full whitespace-nowrap">{t.intro.thought}</span>
                                 <ArrowRight size={8} className="text-slate-300" />
-                                <span className="bg-rose-100/60 text-rose-700 px-1.5 py-0.5 rounded-full whitespace-nowrap">Emoção</span>
+                                <span className="bg-rose-100/60 text-rose-700 px-1.5 py-0.5 rounded-full whitespace-nowrap">{t.intro.emotion}</span>
                                 <ArrowRight size={8} className="text-slate-300" />
-                                <span className="bg-emerald-100/60 text-emerald-700 px-1.5 py-0.5 rounded-full whitespace-nowrap">Ação</span>
+                                <span className="bg-emerald-100/60 text-emerald-700 px-1.5 py-0.5 rounded-full whitespace-nowrap">{t.intro.action}</span>
                             </div>
                         </div>
                     </button>
 
                     <button 
                         onClick={() => onStart('inverse')}
-                        className="group relative p-4 glass-panel rounded-2xl hover:-translate-y-1 transition-all duration-300 text-left overflow-hidden h-full flex flex-col shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-teal-500/30"
+                        className="group relative p-4 glass-panel rounded-2xl hover:-translate-y-1 transition-all duration-300 text-left overflow-hidden h-full flex flex-col shadow-lg hover:shadow-xl"
                     >
                         <div className="absolute inset-0 bg-gradient-to-br from-teal-50/50 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                         <div className="relative z-10 flex flex-col h-full w-full">
                             <div className="flex flex-row items-start justify-between mb-2 gap-2 w-full">
-                                <span className="font-bold text-sm md:text-base text-teal-950 leading-tight">Cadeia Inversa</span>
+                                <span className="font-bold text-sm md:text-base text-teal-950 leading-tight">{t.intro.inverse}</span>
                                 <div className="bg-teal-100/50 p-1 rounded-full w-fit group-hover:bg-teal-600 group-hover:text-white transition-all flex-shrink-0"><ArrowRight size={14} /></div>
                             </div>
-                            <p className="text-slate-500 mb-3 font-light text-xs flex-grow leading-snug">Analise uma ação para entender suas raízes.</p>
+                            <p className="text-slate-500 mb-3 font-light text-xs flex-grow leading-snug">{t.intro.inverseDesc}</p>
                             <div className="flex flex-row flex-wrap items-center gap-1 text-[9px] md:text-[10px] font-semibold uppercase tracking-wider text-slate-400">
-                                <span className="bg-emerald-100/60 text-emerald-700 px-1.5 py-0.5 rounded-full whitespace-nowrap">Ação</span>
+                                <span className="bg-emerald-100/60 text-emerald-700 px-1.5 py-0.5 rounded-full whitespace-nowrap">{t.intro.action}</span>
                                 <ArrowRight size={8} className="text-slate-300" />
-                                <span className="bg-rose-100/60 text-rose-700 px-1.5 py-0.5 rounded-full whitespace-nowrap">Emoção</span>
+                                <span className="bg-rose-100/60 text-rose-700 px-1.5 py-0.5 rounded-full whitespace-nowrap">{t.intro.emotion}</span>
                                 <ArrowRight size={8} className="text-slate-300" />
-                                <span className="bg-blue-100/60 text-blue-700 px-1.5 py-0.5 rounded-full whitespace-nowrap">Pensamento</span>
+                                <span className="bg-blue-100/60 text-blue-700 px-1.5 py-0.5 rounded-full whitespace-nowrap">{t.intro.thought}</span>
                             </div>
                         </div>
                     </button>
@@ -183,13 +318,13 @@
             </div>
         );
 
-        const InputView = ({ stages, currentStageIndex, currentStage, data, inputText, setInputText, onAddItem, onRemoveItem, onNextStage }) => {
-            const stageInfo = {
-                pensamentos: { title: "Pensamentos Automáticos", text: "Frases rápidas e interpretações sobre a situação.", examples: "'Vai dar tudo errado', 'Eles estão me julgando'." },
-                emocoes: { title: "Identificando Emoções", text: "O que você sente no corpo e na alma (uma palavra).", examples: "Ansiedade, Medo, Raiva, Culpa, Tristeza." },
-                comportamentos: { title: "Suas Ações", text: "O que você fez ou deixou de fazer.", examples: "Chorar, gritar, silenciar, procrastinar." }
-            };
-            const info = stageInfo[currentStage.key];
+        const InputView = ({ stages, currentStageIndex, currentStage, data, inputText, setInputText, onAddItem, onRemoveItem, onNextStage, t }) => {
+            // As informações da etapa agora vêm diretamente das props 'stages' que foram traduzidas no componente pai
+            
+            // O objeto 'info' precisa ser montado com base nas props traduzidas 'currentStage'
+            // Mas 'currentStage' só tem label, prompt, icon, color, bg. Faltam title, text, examples.
+            // Solução: Pegar do dicionário de tradução com base na chave.
+            const info = t.input.stages[currentStage.key];
 
             return (
                 <div className="max-w-2xl mx-auto w-full animate-fade-in px-4 pt-6 md:pt-12">
@@ -221,26 +356,24 @@
                                 <div className="flex gap-1 items-center text-indigo-600/80 italic text-[10px] border-t border-indigo-200/30 pt-1.5 mt-1 relative z-10"><span className="font-semibold bg-indigo-100 px-1 py-0.5 rounded">Ex:</span> {info.examples}</div>
                             </div>
                             <form onSubmit={onAddItem} className="flex gap-2">
-                                <input autoFocus type="text" value={inputText} onChange={(e) => setInputText(e.target.value)} placeholder="Digite e pressione enter..." className="glass-input flex-1 p-3 rounded-xl text-sm text-slate-700 placeholder:text-slate-400 outline-none w-full" />
+                                <input autoFocus type="text" value={inputText} onChange={(e) => setInputText(e.target.value)} placeholder={t.input.placeholder} className="glass-input flex-1 p-3 rounded-xl text-sm text-slate-700 placeholder:text-slate-400 outline-none w-full" />
                                 <button type="submit" disabled={!inputText.trim()} className="bg-indigo-600 text-white p-3 rounded-xl hover:bg-indigo-700 disabled:opacity-50 transition-all active:scale-95"><Plus size={20} /></button>
                             </form>
                             <div className="space-y-2 min-h-[80px]">
                                 {data[currentStage.key].length === 0 ? (
-                                    <div className="flex flex-col items-center justify-center h-20 text-slate-400 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50/30"><span className="text-xs font-medium">Sua mente está calma por enquanto...</span><span className="text-[9px] mt-0.5">Adicione itens acima</span></div>
+                                    <div className="flex flex-col items-center justify-center h-20 text-slate-400 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50/30"><span className="text-xs font-medium">{t.input.emptyTitle}</span><span className="text-[9px] mt-0.5">{t.input.emptyDesc}</span></div>
                                 ) : (
                                     data[currentStage.key].map((item, idx) => (
                                         <div key={idx} className="flex items-center justify-between bg-white/70 p-2.5 rounded-lg border border-white/60 shadow-sm animate-slide-up">
-                                            {/* Adicionado 'break-all' e 'pr-2' para quebra de linha correta */}
                                             <span className="text-slate-700 font-medium text-xs break-all pr-2">{item}</span>
-                                            {/* Adicionado 'flex-shrink-0' para o botão não encolher */}
                                             <button onClick={() => onRemoveItem(currentStage.key, idx)} className="text-slate-400 hover:text-red-500 p-1 rounded-md flex-shrink-0"><X size={14} /></button>
                                         </div>
                                     ))
                                 )}
                             </div>
                             <div className="pt-3 flex justify-between items-center border-t border-slate-200/50">
-                                <span className="text-[10px] text-slate-500 font-medium">{data[currentStage.key].length} registros</span>
-                                <button onClick={onNextStage} className="px-5 py-2 bg-slate-800 text-white rounded-lg font-semibold hover:bg-black transition-all flex items-center gap-1.5 text-xs shadow-md">{currentStageIndex === 2 ? 'Ver Panorama' : 'Próximo Passo'}<ArrowRight size={14} /></button>
+                                <span className="text-[10px] text-slate-500 font-medium">{data[currentStage.key].length} {t.input.count}</span>
+                                <button onClick={onNextStage} className="px-5 py-2 bg-slate-800 text-white rounded-lg font-semibold hover:bg-black transition-all flex items-center gap-1.5 text-xs shadow-md">{currentStageIndex === 2 ? t.input.overview : t.input.next}<ArrowRight size={14} /></button>
                             </div>
                         </div>
                     </div>
@@ -248,13 +381,16 @@
             );
         };
 
-        const ResultView = ({ stages, data, onRestart, onSave, fromHistory, onBack }) => (
+        const ResultView = ({ stages, data, onRestart, onSave, fromHistory, onBack, t }) => (
             <div className="max-w-4xl mx-auto w-full animate-fade-in pb-12 px-4 pt-6 md:pt-12">
                 <div className="text-center mb-8 space-y-1.5">
                     <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-[10px] font-semibold mb-1 border border-indigo-100">
-                        {fromHistory ? <HistoryIcon size={12} /> : <Activity size={12} />} {fromHistory ? "Visualizando Histórico" : "Análise Completa"}
+                        {fromHistory ? <HistoryIcon size={12} /> : <Activity size={12} />} {fromHistory ? t.result.historyTag : t.result.completeTag}
                     </div>
-                    <h2 className="text-2xl font-bold text-slate-800">Panorama Cognitivo</h2>
+                    <h2 className="text-2xl font-bold text-slate-800">{t.result.title}</h2>
+                    <p className="text-base font-light text-slate-600 max-w-lg mx-auto">
+                        {fromHistory ? t.result.descHistory : t.result.descComplete}
+                    </p>
                 </div>
                 <div className="grid md:grid-cols-3 gap-4 relative">
                     <div className="hidden md:block absolute top-6 left-8 right-8 h-0.5 bg-gradient-to-r from-transparent via-slate-300 to-transparent border-t-2 border-dashed border-slate-300/50 -z-10" />
@@ -269,7 +405,7 @@
                                 <div className="p-3 flex-1 bg-white/30">
                                     {data[s.key].length > 0 ? (
                                         <ul className="space-y-1.5">{data[s.key].map((item, i) => (<li key={i} className="bg-white/80 p-2.5 rounded-lg border border-white shadow-sm text-slate-700 text-[11px] relative"><div className={`absolute left-0 top-2 bottom-2 w-0.5 rounded-r-full ${s.bg.replace('bg-', 'bg-').replace('100', '400')}`}></div><span className="pl-2 block break-words">"{item}"</span></li>))}</ul>
-                                    ) : <div className="h-full flex flex-col items-center justify-center text-slate-400 text-[10px] italic opacity-60 min-h-[80px]">Vazio</div>}
+                                    ) : <div className="h-full flex flex-col items-center justify-center text-slate-400 text-[10px] italic opacity-60 min-h-[80px]">{t.result.empty}</div>}
                                 </div>
                             </div>
                         </div>
@@ -277,41 +413,41 @@
                 </div>
                 <div className="mt-8 flex flex-col sm:flex-row justify-center gap-3">
                     <button onClick={fromHistory ? onBack : onRestart} className="px-5 py-2.5 bg-white/80 backdrop-blur-md border border-slate-200 text-slate-700 rounded-xl hover:bg-white transition-all font-semibold text-xs shadow-sm flex items-center justify-center gap-1.5">
-                        {fromHistory ? <><ArrowLeft size={14} /> Voltar ao Histórico</> : <><RotateCcw size={14} /> Iniciar Nova Análise</>}
+                        {fromHistory ? <><ArrowLeft size={14} /> {t.result.backHistory}</> : <><RotateCcw size={14} /> {t.result.newAnalysis}</>}
                     </button>
-                    {!fromHistory && <button onClick={onSave} className="px-5 py-2.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-all font-semibold text-xs shadow-lg flex items-center justify-center gap-1.5"><Save size={14} /> Salvar e Finalizar</button>}
-                    {fromHistory && <button onClick={() => window.print()} className="px-5 py-2.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-all font-semibold text-xs shadow-lg flex items-center justify-center gap-1.5"><Printer size={14} /> Imprimir</button>}
+                    {!fromHistory && <button onClick={onSave} className="px-5 py-2.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-all font-semibold text-xs shadow-lg flex items-center justify-center gap-1.5"><Save size={14} /> {t.result.save}</button>}
+                    {fromHistory && <button onClick={() => window.print()} className="px-5 py-2.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-all font-semibold text-xs shadow-lg flex items-center justify-center gap-1.5"><Printer size={14} /> {t.result.print}</button>}
                 </div>
             </div>
         );
 
-        const HistoryView = ({ history, onBack, onSelect }) => (
+        const HistoryView = ({ history, onBack, onSelect, t }) => (
             <div className="max-w-4xl mx-auto w-full animate-fade-in pb-12 px-4 pt-6 md:pt-12">
                  <div className="text-center mb-10 space-y-2">
-                    <h2 className="text-3xl font-bold text-slate-800">Seu Histórico</h2>
-                    <p className="text-slate-500 text-sm">Salvo neste computador.</p>
+                    <h2 className="text-3xl font-bold text-slate-800">{t.history.title}</h2>
+                    <p className="text-base font-light text-slate-600">{t.history.subtitle}</p>
                 </div>
                 <div className="space-y-4">
                     {history.length === 0 ? (
-                        <div className="text-center py-12 glass-panel rounded-2xl"><p className="text-slate-400">Você ainda não tem análises salvas.</p></div>
+                        <div className="text-center py-12 glass-panel rounded-2xl"><p className="text-slate-400">{t.history.empty}</p></div>
                     ) : (
                         history.map((entry, index) => (
                             <div key={entry.id || index} onClick={() => onSelect(entry)} className="glass-panel rounded-2xl p-6 shadow-sm hover:shadow-lg cursor-pointer transition-all border border-transparent hover:border-indigo-200 h-auto">
                                 <div className="flex justify-between items-center mb-2">
                                     <span className="text-xs font-bold uppercase tracking-wider text-indigo-500 bg-indigo-50 px-2 py-1 rounded">{new Date(entry.timestamp).toLocaleDateString('pt-BR')}</span>
-                                    <span className="text-xs text-slate-400">{entry.direction === 'forward' ? 'Direta' : 'Inversa'}</span>
+                                    <span className="text-xs text-slate-400">{entry.direction === 'forward' ? t.history.direct : t.history.inverse}</span>
                                 </div>
-                                <div className="text-sm text-slate-600 font-medium break-words">{entry.pensamentos?.[0] || "Sem título..."}</div>
+                                <div className="text-sm text-slate-600 font-medium break-words">{entry.pensamentos?.[0] || t.history.untitled}</div>
                             </div>
                         ))
                     )}
                 </div>
-                <div className="mt-8 flex justify-center"><button onClick={onBack} className="px-6 py-3 bg-slate-800 text-white rounded-xl hover:bg-slate-900 transition-all font-semibold text-sm shadow-lg flex items-center gap-2"><RotateCcw size={16} /> Voltar</button></div>
+                <div className="mt-8 flex justify-center"><button onClick={onBack} className="px-6 py-3 bg-slate-800 text-white rounded-xl hover:bg-slate-900 transition-all font-semibold text-sm shadow-lg flex items-center gap-2"><RotateCcw size={16} /> {t.history.back}</button></div>
             </div>
         );
 
         // --- COMPONENTE FERRAMENTA: REGISTRO DE PENSAMENTOS ---
-        const ThoughtRecordTool = () => {
+        const ThoughtRecordTool = ({ t, lang }) => {
             const [step, setStep] = useState('intro'); 
             const [direction, setDirection] = useState('forward');
             const [currentStageIndex, setCurrentStageIndex] = useState(0);
@@ -335,9 +471,9 @@
 
             const getStages = () => {
                 const common = {
-                    pensamentos: { key: 'pensamentos', label: 'Pensamentos', icon: <Brain />, color: 'text-indigo-600', bg: 'bg-indigo-100', prompt: 'O que passou pela sua cabeça?' },
-                    emocoes: { key: 'emocoes', label: 'Emoções', icon: <Heart />, color: 'text-rose-600', bg: 'bg-rose-100', prompt: 'O que você sentiu?' },
-                    comportamentos: { key: 'comportamentos', label: 'Comportamentos', icon: <Activity />, color: 'text-teal-600', bg: 'bg-teal-100', prompt: 'O que você fez?' }
+                    pensamentos: { key: 'pensamentos', label: t.input.stages.pensamentos.label, icon: <Brain />, color: 'text-indigo-600', bg: 'bg-indigo-100', prompt: t.input.stages.pensamentos.prompt },
+                    emocoes: { key: 'emocoes', label: t.input.stages.emocoes.label, icon: <Heart />, color: 'text-rose-600', bg: 'bg-rose-100', prompt: t.input.stages.emocoes.prompt },
+                    comportamentos: { key: 'comportamentos', label: t.input.stages.comportamentos.label, icon: <Activity />, color: 'text-teal-600', bg: 'bg-teal-100', prompt: t.input.stages.comportamentos.prompt }
                 };
                 return direction === 'forward' 
                     ? [common.pensamentos, common.emocoes, common.comportamentos]
@@ -356,20 +492,20 @@
 
             if (step === 'intro') return (
                 <>
-                    <IntroView onStart={handleStart} />
+                    <IntroView onStart={handleStart} t={t} />
                     <div className="text-center mt-8">
-                        <button onClick={() => setStep('history')} className="text-indigo-600 font-semibold text-sm hover:underline flex items-center justify-center gap-2 mx-auto"><HistoryIcon size={16}/> Ver Histórico Salvo</button>
+                        <button onClick={() => setStep('history')} className="text-indigo-600 font-semibold text-sm hover:underline flex items-center justify-center gap-2 mx-auto"><HistoryIcon size={16}/> {t.history.viewBtn}</button>
                     </div>
                 </>
             );
-            if (step === 'input') return <InputView stages={stages} currentStageIndex={currentStageIndex} currentStage={currentStage} data={data} inputText={inputText} setInputText={setInputText} onAddItem={handleAddItem} onRemoveItem={handleRemoveItem} onNextStage={handleNextStage} />;
-            if (step === 'result') return <ResultView stages={stages} data={data} onRestart={handleRestart} onSave={handleSave} fromHistory={fromHistory} onBack={() => {setStep('history'); setFromHistory(false);}} />;
-            if (step === 'history') return <HistoryView history={history} onBack={handleRestart} onSelect={handleHistorySelect} />;
+            if (step === 'input') return <InputView stages={stages} currentStageIndex={currentStageIndex} currentStage={currentStage} data={data} inputText={inputText} setInputText={setInputText} onAddItem={handleAddItem} onRemoveItem={handleRemoveItem} onNextStage={handleNextStage} t={t} />;
+            if (step === 'result') return <ResultView stages={stages} data={data} onRestart={handleRestart} onSave={handleSave} fromHistory={fromHistory} onBack={() => {setStep('history'); setFromHistory(false);}} t={t} />;
+            if (step === 'history') return <HistoryView history={history} onBack={handleRestart} onSelect={handleHistorySelect} t={t} />;
             return null;
         };
 
         // --- COMPONENTE FERRAMENTA: CARTÕES DE ENFRENTAMENTO ---
-        const CopingCardsTool = () => {
+        const CopingCardsTool = ({ t }) => {
             const [cards, setCards] = useState([]);
             const [inputText, setInputText] = useState('');
 
@@ -394,7 +530,6 @@
             };
 
             return (
-                // Alterado: removido flex-col justify-center min-h e adicionado pt-6 md:pt-12
                 <div className="max-w-4xl mx-auto w-full animate-fade-in px-4 pt-6 md:pt-12">
                     {/* Header Compacto */}
                     <div className="text-center mb-6 space-y-3">
@@ -407,9 +542,9 @@
                         
                         <div className="space-y-1">
                             <h2 className="text-2xl md:text-3xl font-black bg-gradient-to-r from-blue-900 via-sky-700 to-blue-900 bg-clip-text text-transparent tracking-tight pb-1">
-                                Cartões de Enfrentamento
+                                {t.cards.title}
                             </h2>
-                            <p className="text-base font-light text-slate-600">Frases de força para momentos difíceis.</p>
+                            <p className="text-base font-light text-slate-600 max-w-lg mx-auto">{t.cards.subtitle}</p>
                         </div>
                     </div>
 
@@ -420,7 +555,7 @@
                                 type="text" 
                                 value={inputText} 
                                 onChange={(e) => setInputText(e.target.value)} 
-                                placeholder="Nova frase..." 
+                                placeholder={t.cards.placeholder} 
                                 className="glass-input flex-1 p-2.5 rounded-lg text-sm text-slate-700 placeholder:text-slate-400 outline-none w-full" 
                             />
                             <button 
@@ -433,15 +568,13 @@
                         </form>
                     </div>
 
-                    {/* Ajuste aqui: gap-6 para mais espaço entre cartões, p-2 para desgrudar das bordas do container */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 overflow-y-auto max-h-[50vh] p-2 custom-scrollbar pb-8 scroll-fade-mask">
                         {cards.length === 0 ? (
                             <div className="col-span-full text-center py-8 text-slate-400 italic bg-white/30 rounded-xl border border-slate-100 text-xs">
-                                Nenhum cartão criado ainda.
+                                {t.cards.empty}
                             </div>
                         ) : (
                             cards.map(card => (
-                                /* Revertido para p-4 (espaçamento interno normal) */
                                 <div key={card.id} className="glass-panel p-4 rounded-xl relative group hover:-translate-y-0.5 transition-all duration-300 border border-white/60 h-auto shadow-sm hover:shadow-md">
                                     <div className="absolute top-0 right-0 p-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                         <button onClick={() => removeCard(card.id)} className="text-slate-300 hover:text-red-500 transition-colors"><X size={14} /></button>
@@ -459,12 +592,19 @@
         };
 
         // --- COMPONENTE FERRAMENTA: RESPIRAÇÃO & RELAXAMENTO ---
-        const BreathingTool = () => {
+        const BreathingTool = ({ t }) => {
             const [isActive, setIsActive] = useState(false);
             const [phase, setPhase] = useState('idle'); // idle, inhale, hold, exhale
             const [timeLeft, setTimeLeft] = useState(5);
-            const [cycleText, setCycleText] = useState('Pronto?');
+            const [cycleText, setCycleText] = useState(t.breathing.ready);
             const timerRef = useRef(null);
+
+            // Atualiza texto se o idioma mudar enquanto ocioso
+            useEffect(() => {
+                if (phase === 'idle') {
+                    setCycleText(t.breathing.ready);
+                }
+            }, [t, phase]);
 
             useEffect(() => {
                 if (isActive) {
@@ -472,29 +612,25 @@
                         // Ciclo: Inhale (5s) -> Hold (5s) -> Exhale (5s)
                         if (phase === 'idle' || phase === 'exhale') {
                             setPhase('inhale');
-                            setCycleText('Inspire...');
+                            setCycleText(t.breathing.inhale);
                             setTimeLeft(5);
                         } else if (phase === 'inhale') {
                             setPhase('hold');
-                            setCycleText('Segure...');
+                            setCycleText(t.breathing.hold);
                             setTimeLeft(5);
                         } else if (phase === 'hold') {
                             setPhase('exhale');
-                            setCycleText('Solte...');
+                            setCycleText(t.breathing.exhale);
                             setTimeLeft(5);
                         }
                     };
 
-                    // Se estivermos mudando de fase, não precisamos de um timer imediato,
-                    // o efeito do countdown cuidará do tempo.
-                    // Mas precisamos iniciar o ciclo se estiver idle.
                     if (phase === 'idle') runCycle();
 
                     const countdown = setInterval(() => {
                         setTimeLeft((prev) => {
                             if (prev <= 1) {
-                                runCycle();
-                                return 5;
+                                return 5; 
                             }
                             return prev - 1;
                         });
@@ -503,10 +639,32 @@
                     return () => clearInterval(countdown);
                 } else {
                     setPhase('idle');
-                    setCycleText('Pronto?');
+                    setCycleText(t.breathing.ready);
                     setTimeLeft(5);
                 }
-            }, [isActive, phase]);
+            }, [isActive]);
+
+            // Efeito para controlar a troca de fases baseado no tempo (simulado)
+            useEffect(() => {
+                if (!isActive) return;
+                
+                if (timeLeft === 0) {
+                    // Troca de fase
+                    if (phase === 'idle' || phase === 'exhale') setPhase('inhale');
+                    else if (phase === 'inhale') setPhase('hold');
+                    else if (phase === 'hold') setPhase('exhale');
+                    setTimeLeft(5);
+                }
+            }, [timeLeft, isActive, phase]);
+
+            // Atualiza o texto baseado na fase atual (sempre reage a 't')
+            useEffect(() => {
+                if (phase === 'idle') setCycleText(t.breathing.ready);
+                else if (phase === 'inhale') setCycleText(t.breathing.inhale);
+                else if (phase === 'hold') setCycleText(t.breathing.hold);
+                else if (phase === 'exhale') setCycleText(t.breathing.exhale);
+            }, [phase, t]);
+
 
             const getCircleClass = () => {
                 if (!isActive) return 'scale-100 opacity-80';
@@ -524,7 +682,7 @@
             };
 
             return (
-                <div className="flex flex-col items-center w-full animate-fade-in px-4 pt-6 md:pt-12">
+                <div className="flex flex-col items-center justify-center min-h-[60vh] animate-fade-in px-4">
                     
                     {/* Header Compacto */}
                     <div className="text-center mb-6 space-y-3">
@@ -537,9 +695,9 @@
                         
                         <div className="space-y-1">
                             <h2 className="text-2xl md:text-3xl font-black bg-gradient-to-r from-teal-900 via-emerald-800 to-teal-900 bg-clip-text text-transparent tracking-tight pb-1">
-                                Respiração 5-5-5
+                                {t.breathing.title}
                             </h2>
-                            <p className="text-base font-light text-slate-600">Regule sua ansiedade com este ciclo.</p>
+                            <p className="text-base font-light text-slate-600 max-w-md mx-auto">{t.breathing.subtitle}</p>
                         </div>
                     </div>
 
@@ -563,7 +721,7 @@
                             onClick={() => setIsActive(!isActive)}
                             className={`px-6 py-3 rounded-xl font-bold text-base flex items-center gap-2 transition-all shadow-lg hover:-translate-y-1 mx-auto border-2 ${isActive ? 'bg-transparent border-rose-500 text-rose-500 hover:bg-rose-50' : 'bg-transparent border-teal-600 text-teal-600 hover:bg-teal-50'}`}
                         >
-                            {isActive ? <><Pause size={18} /> Parar</> : <><Play size={18} /> Começar</>}
+                            {isActive ? <><Pause size={18} /> {t.breathing.stop}</> : <><Play size={18} /> {t.breathing.start}</>}
                         </button>
                     </div>
                 </div>
@@ -572,7 +730,14 @@
 
         // --- COMPONENTE PRINCIPAL (APP) ---
         const App = () => {
-            const [activeTool, setActiveTool] = useState('thought-record'); // 'thought-record' | 'breathing' | 'coping-cards'
+            const [activeTool, setActiveTool] = useState('thought-record');
+            const [language, setLanguage] = useState('pt'); // 'pt' | 'en'
+
+            const t = translations[language];
+
+            const toggleLanguage = () => {
+                setLanguage(prev => prev === 'pt' ? 'en' : 'pt');
+            };
 
             const getGradient = () => {
                 if (activeTool === 'thought-record') return 'bg-gradient-to-r from-indigo-50 to-purple-50';
@@ -597,19 +762,17 @@
 
                         {/* Barra de Navegação Centralizada com Estilo dos Cards */}
                         <div className="w-full flex justify-center order-1 md:order-2 px-4 md:px-0">
-                            {/* Alterei w-full para w-fit e reduzi max-w-5xl para max-w-4xl para "encolher" e evitar sobreposição */}
                             <nav className="glass-panel rounded-2xl p-2 flex justify-center items-center shadow-2xl shadow-indigo-100/40 relative overflow-hidden ring-1 ring-white/60 transition-all duration-500 w-fit max-w-4xl mx-auto">
                                 
                                 {/* Gradiente de Fundo Dinâmico */}
                                 <div className={`absolute inset-0 opacity-30 transition-colors duration-500 ${getGradient()}`}></div>
                                 
-                                {/* Removi overflow-x-auto e adicionei flex-wrap com justify-center para telas muito pequenas, mas forçando linha em telas maiores */}
                                 <div className="flex relative z-10 w-full justify-between items-center gap-1 md:gap-2">
                                     <button 
                                         onClick={() => setActiveTool('thought-record')}
                                         className={`p-3 rounded-xl text-[10px] md:text-sm font-bold transition-all flex items-center justify-center gap-2 whitespace-nowrap ${activeTool === 'thought-record' ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200 scale-105' : 'text-slate-500 hover:bg-white/50 hover:text-indigo-600'}`}
                                     >
-                                        <Brain size={16} className="flex-shrink-0" /> Registro de Pensamentos
+                                        <Brain size={16} className="flex-shrink-0" /> {t.nav.recordFull}
                                     </button>
                                     
                                     <div className="w-px h-6 bg-slate-300/50 flex-shrink-0 hidden sm:block"></div>
@@ -618,7 +781,7 @@
                                         onClick={() => setActiveTool('breathing')}
                                         className={`p-3 rounded-xl text-[10px] md:text-sm font-bold transition-all flex items-center justify-center gap-2 whitespace-nowrap ${activeTool === 'breathing' ? 'bg-teal-600 text-white shadow-lg shadow-teal-200 scale-105' : 'text-slate-500 hover:bg-white/50 hover:text-teal-600'}`}
                                     >
-                                        <Wind size={16} className="flex-shrink-0" /> Respiração
+                                        <Wind size={16} className="flex-shrink-0" /> {t.nav.breathing}
                                     </button>
 
                                     <div className="w-px h-6 bg-slate-300/50 flex-shrink-0 hidden sm:block"></div>
@@ -627,23 +790,29 @@
                                         onClick={() => setActiveTool('coping-cards')}
                                         className={`p-3 rounded-xl text-[10px] md:text-sm font-bold transition-all flex items-center justify-center gap-2 whitespace-nowrap ${activeTool === 'coping-cards' ? 'bg-blue-600 text-white shadow-lg shadow-blue-200 scale-105' : 'text-slate-500 hover:bg-white/50 hover:text-blue-600'}`}
                                     >
-                                        <Shield size={16} className="flex-shrink-0" /> Cartões de Enfrentamento
+                                        <Shield size={16} className="flex-shrink-0" /> {t.nav.cards}
                                     </button>
                                 </div>
                             </nav>
                         </div>
+
+                        {/* Botão de Idioma (Direita) */}
+                        <div className="md:absolute md:right-8 md:top-1/2 md:-translate-y-1/2 order-3">
+                            <button onClick={toggleLanguage} className="p-2 rounded-xl bg-white/50 hover:bg-white/80 transition-all text-slate-500 hover:text-indigo-600 shadow-sm border border-white/50 flex items-center gap-2 font-semibold text-xs uppercase" title="Mudar Idioma / Change Language">
+                                <Globe size={20} /> <span>{language}</span>
+                            </button>
+                        </div>
                         
                     </header>
 
-                    {/* Removido justify-center e adicionado pt-4 para controle manual do topo nos filhos */}
                     <main className="container mx-auto flex-grow z-10 flex flex-col py-4">
-                        {activeTool === 'thought-record' && <ThoughtRecordTool />}
-                        {activeTool === 'breathing' && <BreathingTool />}
-                        {activeTool === 'coping-cards' && <CopingCardsTool />}
+                        {activeTool === 'thought-record' && <ThoughtRecordTool t={t} lang={language} />}
+                        {activeTool === 'breathing' && <BreathingTool t={t} />}
+                        {activeTool === 'coping-cards' && <CopingCardsTool t={t} />}
                     </main>
 
                     <footer className="py-6 text-center text-slate-400 text-xs mt-auto z-10">
-                        <p>Desenvolvido por Mateus Uriel Graunke Barroso</p>
+                        <p>{t.footer} Mateus Uriel Graunke Barroso</p>
                         <div className="flex justify-center items-center gap-6 p-3">
                             <a href="https://www.instagram.com/mateusurielbarroso/" className="text-slate-400 hover:text-pink-600 transition-all transform hover:scale-110 hover:-translate-y-1" aria-label="Instagram" target="_blank">
                                 <Instagram size={24} />
